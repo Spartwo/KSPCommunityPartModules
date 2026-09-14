@@ -81,7 +81,7 @@ namespace KSPCommunityPartModules.Modules
             // Parse attachment nodes
             if (!string.IsNullOrWhiteSpace(requiredNodes))
             {
-                foreach (string nodeName in requiredNodes.Split(','))
+                foreach (string nodeName in requiredNodes.Split(';'))
                 {
                     string nodeId = nodeName.Trim();
 
