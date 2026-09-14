@@ -62,6 +62,10 @@ namespace KSPCommunityPartModules.Modules
             CacheInitialChildren();
             ParseConfig();
             UpdateVisuals();
+			
+            // make this module cheaper in update loops
+            isEnabled = false;
+            enabled = false;
         }
 
         public void OnDestroy()
