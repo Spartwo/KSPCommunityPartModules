@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using KSP.Localization;
 
 namespace KSPCommunityPartModules.Modules
 {
@@ -62,9 +63,8 @@ namespace KSPCommunityPartModules.Modules
             CacheInitialChildren();
             ParseConfig();
             UpdateVisuals();
-			
+
             // make this module cheaper in update loops
-            isEnabled = false;
             enabled = false;
         }
 
@@ -116,7 +116,7 @@ namespace KSPCommunityPartModules.Modules
             // Parse transforms shown when condition is true
             if (!string.IsNullOrWhiteSpace(showAttached))
             {
-                foreach (string transformName in showAttached.Split(','))
+                foreach (string transformName in showAttached.Split(';'))
                 {
                     string name = transformName.Trim();
 
@@ -142,7 +142,7 @@ namespace KSPCommunityPartModules.Modules
             // Parse transforms shown when condition is false
             if (!string.IsNullOrWhiteSpace(showFree))
             {
-                foreach (string transformName in showFree.Split(','))
+                foreach (string transformName in showFree.Split(';'))
                 {
                     string name = transformName.Trim();
 
@@ -191,13 +191,15 @@ namespace KSPCommunityPartModules.Modules
             // Only offer the toggle when there's actually something capped to toggle
             toggleEvent.active = allNodesAttached;
 
-            string verb = transformEnabled ? "Disable" : "Enable";
+            string adjective = transformEnabled 
+                ? Localizer.Format("#autoLOC_900889") 
+                : Localizer.Format("#autoLOC_247995");
 
             string displayName = string.IsNullOrWhiteSpace(objectDisplayName)
-                ? $"{verb} Capping"
-                : $"{verb} {objectDisplayName}";
+                ? Localizer.Format("#KSPCPM_AttachmentVisual")
+                : Localizer.Format(objectDisplayName);
 
-            toggleEvent.guiName = displayName;
+            toggleEvent.guiName = $"{displayName} {adjective}";
         }
 
         private void SetTransforms(List<Transform> transforms, bool active)
