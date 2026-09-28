@@ -33,7 +33,7 @@ namespace KSPCommunityPartModules.Modules
         [KSPEvent(
             guiActive = false,
             guiActiveEditor = true,
-            guiName = "#KSPCPM_Capping"
+            guiName = "#KSPCPM_AttachmentVisual"
         )]
         public void EventToggleVisual() => ToggleVisual();
 
