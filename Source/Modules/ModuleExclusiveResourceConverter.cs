@@ -6,14 +6,8 @@
 */
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
-using KSP.IO;
-using KSP.UI.Screens;
 
 namespace KSPCommunityPartModules.Modules
 {
@@ -30,7 +24,8 @@ namespace KSPCommunityPartModules.Modules
             ModuleExclusiveResourceConverter[] otherConverters = part.GetComponents<ModuleExclusiveResourceConverter>();
             foreach (ModuleExclusiveResourceConverter e in otherConverters) 
             {
-                e.StopResourceConverter();
+                //Guard against stopping itself or already stopped converters
+                if (e != this && e.IsActivated) e.StopResourceConverter();
             }
         }
 

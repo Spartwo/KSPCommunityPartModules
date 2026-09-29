@@ -5,16 +5,10 @@
     License:        GNU General Public License v3.0, see https://www.gnu.org/licenses/gpl-3.0.html
 */
 
+using KSP.Localization;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
-using KSP.IO;
-using KSP.UI.Screens;
-using UnityEngine.SceneManagement;
 
 namespace KSPCommunityPartModules.Modules
 {
@@ -24,11 +18,11 @@ namespace KSPCommunityPartModules.Modules
         [KSPEvent(guiActive = true,
             guiActiveEditor = true,
             guiName = "#KSPCPM_Tracking")]
-        public void EventToggleTracking() => ToggleTracking();
+        public void EventToggleTracking() => SetTracking(!trackingEnabled);
 
 
         [KSPAction("#KSPCPM_ToggleTracking")]
-        public void AGToggleTracking(KSPActionParam param) => ToggleTracking();
+        public void AGToggleTracking(KSPActionParam param) => SetTracking(!trackingEnabled);
 
         [KSPAction("#KSPCPM_DisableTracking")]
         public void AGDisableTracking(KSPActionParam param) => SetTracking(false);
@@ -39,60 +33,68 @@ namespace KSPCommunityPartModules.Modules
         [KSPField(isPersistant = true)]
         public bool trackingEnabled;
 
-        ModuleDeployablePart tracker;
+        List<ModuleDeployablePart> trackers;
+        private BaseEvent toggleEvent;
+
+        public override void OnStartFinished(StartState state)
+        {
+            base.OnStartFinished(state);
+            toggleEvent = Events["EventToggleTracking"];
+            Apply(state);
+        }
 
         public override void OnStart(StartState state)
         {
             base.OnStart(state);
+            Apply(state);
+        }
+
+        public void Apply(StartState state)
+        {
+            Debug.Log("tracking enabled" + trackingEnabled);
 
             try
             {
-                tracker = part.GetComponent<ModuleDeployablePart>();
-                SetToggleName();
+                // Find Tracker modules
+                if (trackers == null)
+                    trackers = part.FindModulesImplementing<ModuleDeployablePart>();
+
+                // If there's still null that's a problem
+                if (trackers == null)
+                {
+                    Debug.LogWarning($"[ModuleToggleTracking] No ModuleDeployablePart on '{part.name}'");
+                    return;
+                }
+
                 if (state != StartState.Editor)
                 {
                     SetTracking(trackingEnabled);
                 }
-            }
-            catch(Exception e)
-            {
-                Debug.Log($"Setup Error: {e}");
-            }
-
-        }
-
-        public override void OnLoad(ConfigNode node)
-        {
-            try
-            {
-                tracker = part.GetComponent<ModuleDeployablePart>();
-                SetToggleName();
-                SetTracking(trackingEnabled);
+                else
+                {
+                    UpdateToggleName();
+                }
             }
             catch (Exception e)
             {
-                Debug.Log($"Load Error: {e}");
+                Debug.Log($"[ModuleToggleTracking] {e}");
             }
         }
 
         private void SetTracking(bool newState)
         {
             trackingEnabled = newState;
-            tracker.isTracking = newState; 
-            SetToggleName();
+            foreach (var tracker in trackers) tracker.isTracking = newState;
+            UpdateToggleName();
         }
 
-        private void ToggleTracking()
-        {
-            bool newState = !trackingEnabled;
-            trackingEnabled = newState;
-            tracker.isTracking = newState;
-            SetToggleName();
-        }
 
-        private void SetToggleName()
+        private void UpdateToggleName()
         {
-            Events["EventToggleTracking"].guiName = trackingEnabled ? "#KSPCPM_DisableTracking" : "#KSPCPM_EnableTracking";
+            if (toggleEvent == null) return;
+            toggleEvent.guiName = Localizer.Format(trackingEnabled
+                ? "#KSPCPM_DisableTracking"
+                : "#KSPCPM_EnableTracking");
         }
     }
 }

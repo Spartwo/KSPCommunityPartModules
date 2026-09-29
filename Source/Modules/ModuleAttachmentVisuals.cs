@@ -26,7 +26,7 @@ namespace KSPCommunityPartModules.Modules
         [KSPField]
         public string showFree;
 
-        //"Enable/Disable <objectDisplayName>" in the editor
+        //"<objectDisplayName> Enabled/Disabled" in the editor
         [KSPField]
         public string objectDisplayName;
 
@@ -172,9 +172,9 @@ namespace KSPCommunityPartModules.Modules
             // - transform is enabled
             // - all config nodes are occupied
 
-            bool allNodesAttached =
-                nodes.Count > 0 &&
-                nodes.All(node => node != null && node.attachedPart != null);
+            bool allNodesAttached = nodes.Count > 0;
+            for (int i = 0; i < nodes.Count && allNodesAttached; i++)
+                allNodesAttached = nodes[i].attachedPart != null;
 
             bool visualActive = transformEnabled && allNodesAttached;
 

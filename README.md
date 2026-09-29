@@ -35,7 +35,7 @@ Compatible with **KSP 1.12.3** and up - Available on [CKAN]
   
 - **ModuleExclusiveResourceConverter**<br/>This module is a variant of the stock resource converter which will only allow one process to run at a time (for example cannot convert LFO and Monoprop at the same time).
   
-- **ModuleToggleTracking**<br/>This module allows the sun-tracking behaviour of solar/radiator panels or any `ModuelDeployablePart` instance to be enabled or disabled on the fly.
+- **ModuleToggleTracking**<br/>This module allows the sun-tracking behaviour of solar/radiator panels or any `ModuleDeployablePart` instance to be enabled or disabled on the fly.
 
 
 [CKAN]: https://forum.kerbalspaceprogram.com/topic/197082-ckan-the-comprehensive-kerbal-archive-network-v1332-laplace-ksp-2-support/
